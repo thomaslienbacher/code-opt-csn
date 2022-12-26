@@ -1,0 +1,5 @@
+.vscode/**
+server
+**/.idea/**
+**/cmake-build-*/**
+
