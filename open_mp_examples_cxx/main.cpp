@@ -5,7 +5,7 @@
 #include <sstream>
 #include "Benchmark.hpp"
 
-#define N 32000000
+#define N (32'000'000)
 
 uint64_t data[N];
 
