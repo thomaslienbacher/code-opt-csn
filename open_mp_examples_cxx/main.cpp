@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cmath>
 #include <omp.h>
+#include <sstream>
 #include "Benchmark.hpp"
 
 #define N 32000000
@@ -10,6 +11,13 @@ uint64_t data[N];
 
 int main() {
     std::cout << "omp num procs: " << omp_get_num_procs() << "\n";
+
+#pragma omp parallel default(none) shared(stdout)
+    {
+        int id = omp_get_thread_num();
+        fprintf(stdout, "thread id: %d\n", id);
+    }
+
 
     auto b1 = Benchmark("simple-for", 500, [&]() {
         for (int i = 0; i < N; ++i) {
