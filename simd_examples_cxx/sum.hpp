@@ -11,6 +11,8 @@ uint32_t naive_sum(const uint32_t *data, int len);
 
 uint32_t simd_sum(uint32_t *data, int len);
 
+uint32_t simd_256_sum(uint32_t *data, int len);
+
 uint32_t naive_omp_sum(const uint32_t *data, int len);
 
 uint32_t simd_omp_sum(uint32_t *data, int len);
