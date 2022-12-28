@@ -15,5 +15,15 @@ uint32_t naive_omp_sum(const uint32_t *data, int len);
 
 uint32_t simd_omp_sum(uint32_t *data, int len);
 
+uint32_t selected_naive_sum(const uint32_t *data, int len);
+
+uint32_t selected_simd_sum(uint32_t *data, int len);
+
+uint32_t selected_simd_256_sum(uint32_t *data, int len);
+
+uint32_t selected_naive_omp_sum(const uint32_t *data, int len);
+
+uint32_t selected_simd_omp_sum(uint32_t *data, int len);
+
 
 #endif //SIMD_EXAMPLES_CXX_SUM_HPP
