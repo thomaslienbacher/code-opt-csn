@@ -1,5 +1,5 @@
 # Code-Optimization
-By Thomas Lienbacher and Frederick Knauder
+By Thomas Lienbacher (12113690) and Frederick Knauder (12005333)
 ## Table of contents
 
 * Introduction
@@ -10,7 +10,7 @@ By Thomas Lienbacher and Frederick Knauder
 * Guideline for practical examples
 * Sources
 
-## Introduktion
+## Introduction
 
 Code optimization is the process of improving the performance of a computer program by making changes to the source code that do not alter its functionality. This can include techniques such as reducing the number of instructions executed, reducing memory usage, and improving algorithm efficiency. The goal of code optimization is typically to make the program run faster, use less memory, or both. This report focuses on four key strategies: branchless code, loop unrolling, OpenMP, and Single Instruction Multiple Data (SIMD) parallelization.
 
@@ -18,7 +18,7 @@ Code optimization is the process of improving the performance of a computer prog
 
 Branchless code is a technique that involves removing branches from the code and replacing them with mathematical operations in order to improve performance. Branches in code can be expensive, as they require the processor to predict the outcome of the branch and then execute the appropriate instructions. When the prediction is incorrect, the processor must flush the pipeline and start over, leading to a performance penalty known as a branch misprediction.
 
-For example, instead of using the branch instruction "if (x < 0) y = -1; else y = 1;", the branchless equivalent would be "y = (x >> 31) | 1;". This shifts the sign bit of x into the least significant bit and ORs it with 1, resulting in -1 for negative x and 1 for non-negative x. This eliminates the branch instruction and improves performance.
+For example, instead of using the branch instruction `if (x < 0) y = -1; else y = 1;`, the branchless equivalent would be `y = (x >> 31) | 1;`. This shifts the sign bit of `x` into the least significant bit and ORs it with 1, resulting in -1 for negative `x` and 1 for non-negative `x`. This eliminates the branch instruction and improves performance.
 
 While branchless code can improve performance, it is not always the best choice. The code can become more difficult to read and understand, and the performance benefits may not be significant in all cases. Additionally, some compilers are able to optimize branches and improve performance, so the use of branchless code should be carefully considered on a case-by-case basis.
 
@@ -40,7 +40,7 @@ In conclusion, loop unrolling is a technique that can be used to improve perform
 
 OpenMP (Open Multi-Processing) is a set of compiler directives and library routines that can be used to parallelize code in a straightforward manner. It is designed to work seamlessly with the C, C++, and Fortran programming languages and allows developers to add parallelism to their code without the need for explicit thread management or low-level memory management.
 
-OpenMP provides a set of directives that can be used to specify how a loop or section of code should be parallelized. For example, the "parallel for" directive can be used to parallelize a loop, while the "parallel sections" directive can be used to parallelize a section of code. OpenMP also provides a set of library routines, such as "omp_get_num_threads()" and "omp_set_num_threads()", that can be used to query and set the number of threads that are used for parallel execution.
+OpenMP provides a set of directives that can be used to specify how a loop or section of code should be parallelized. For example, the `parallel for` directive can be used to parallelize a loop, while the `parallel sections` directive can be used to parallelize a section of code. OpenMP also provides a set of library routines, such as `omp_get_num_threads()` and `omp_set_num_threads()`, that can be used to query and set the number of threads that are used for parallel execution.
 
 It has several advantages over other parallel programming models. It is easy to use and does not require explicit thread management or low-level memory management. It also provides a simple and intuitive programming model, as all threads share the same memory space.
 
@@ -61,20 +61,39 @@ In conclusion, SIMD is a powerful technique that can significantly improve the p
 
 ## Guideline for practical examples
 
-*imput here*
+This repository contains four CMake projects. 
+One for each of our topics. 
+These projects can easily be opened using Jetbrain CLion.
+All projects were compiled using GCC 12 on a 11th gen Intel i7 running Fedora Linux 36.
+Your CPU must support up to AVX512 in order to compile these projects and your host system
+should have the OpenMP library installed.
+
+Use this command to check what extensions your CPU supports.
+```
+$ cat /proc/cpuinfo
+```
+
+If you are using Fedora or other RPM based distros you can use the following command to install 
+OpenMP libraries:
+```
+$ dnf install libgomp
+```
+
+Please remember to add `-DCMAKE_BUILD_TYPE=Release` when compiling.
 
 ## Sources
 
-https://dev.to/jobinrjohnson/branchless-programming-does-it-really-matter-20j4  
-https://en.algorithmica.org/hpc/pipelining/branchless/
-https://jaredgorski.org/notes/branchless-programming/
-https://www.geeksforgeeks.org/loop-unrolling/
-https://de.wikipedia.org/wiki/Loop_unrolling
-https://de.wikipedia.org/wiki/OpenMP
-https://tildesites.bowdoin.edu/~ltoma/teaching/cs3225-GIS/fall17/Lectures/openmp.html
-http://jakascorner.com/blog/
-https://en.wikipedia.org/wiki/Single_instruction,_multiple_data
-https://www.openmp.org/wp-content/uploads/openmp-4.5.pdf
-https://www.openmp.org/wp-content/uploads/openmp-examples-4.5.0.pdf
-https://doc.rust-lang.org/stable/core/arch/x86/index.html
-https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html
+* [https://dev.to/jobinrjohnson/branchless-programming-does-it-really-matter-20j4](https://dev.to/jobinrjohnson/branchless-programming-does-it-really-matter-20j4)  
+* [https://en.algorithmica.org/hpc/pipelining/branchless/](https://en.algorithmica.org/hpc/pipelining/branchless/)
+* [https://jaredgorski.org/notes/branchless-programming/](https://jaredgorski.org/notes/branchless-programming/)
+* [https://www.geeksforgeeks.org/loop-unrolling/](https://www.geeksforgeeks.org/loop-unrolling/)
+* [https://de.wikipedia.org/wiki/Loop_unrolling](https://de.wikipedia.org/wiki/Loop_unrolling)
+* [https://de.wikipedia.org/wiki/OpenMP](https://de.wikipedia.org/wiki/OpenMP)
+* [https://tildesites.bowdoin.edu/~ltoma/teaching/cs3225-GIS/fall17/Lectures/openmp.html](https://tildesites.bowdoin.edu/~ltoma/teaching/cs3225-GIS/fall17/Lectures/openmp.html)
+* [http://jakascorner.com/blog/](http://jakascorner.com/blog/)
+* [https://en.wikipedia.org/wiki/Single_instruction,\_multiple_data](https://en.wikipedia.org/wiki/Single_instruction,_multiple_data)
+* [https://www.openmp.org/wp-content/uploads/openmp-4.5.pdf](https://www.openmp.org/wp-content/uploads/openmp-4.5.pdf)
+* [https://www.openmp.org/wp-content/uploads/openmp-examples-4.5.0.pdf](https://www.openmp.org/wp-content/uploads/openmp-examples-4.5.0.pdf)
+* [https://doc.rust-lang.org/stable/core/arch/x86/index.html](https://doc.rust-lang.org/stable/core/arch/x86/index.html)
+* [https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html)
+* [https://godbolt.org/](https://godbolt.org/)
