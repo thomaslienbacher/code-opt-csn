@@ -204,7 +204,7 @@ void selected_sum_benchmark() {
     std::cout << "selected-naive+omp: " << ret << "\n";
 
     auto simd_omp = Benchmark("selected-simd+omp-sum", ITERATIONS, [&]() {
-        ret = selected_simd_omp_sum(data, data_len);
+        ret = selected_simd_512_omp_sum(data, data_len);
     });
     simd_omp.run();
     std::cout << "selected-simd+omp: " << ret << "\n";
@@ -219,7 +219,35 @@ void selected_sum_benchmark() {
 }
 
 int main() {
-    simple_sum_benchmark();
-    selected_sum_benchmark();
+    uint32_t *data = nullptr;
+    int data_len = 0;
+    generate_random_data(50'000'000, &data, &data_len);
+    const int ITERATIONS = 300;
+
+    uint32_t ret = 0;
+    auto naive = Benchmark("selected-naive-sum", ITERATIONS, [&]() {
+        ret = selected_naive_omp_sum(data, data_len);
+    });
+    naive.run();
+    std::cout << "selected-naive-sum: " << ret << "\n";
+
+    ret = 0;
+    auto simd256 = Benchmark("selected-simd-256-sum", ITERATIONS, [&]() {
+        ret = selected_simd_256_omp_sum(data, data_len);
+    });
+    simd256.run();
+    std::cout << "selected-simd-256-sum: " << ret << "\n";
+
+    ret = 0;
+    auto simd512 = Benchmark("selected-simd-512-sum", ITERATIONS, [&]() {
+        ret = selected_simd_512_omp_sum(data, data_len);
+    });
+    simd512.run();
+    std::cout << "selected-simd-512-sum: " << ret << "\n";
+
+    naive.print_stats();
+    simd256.print_stats();
+    simd512.print_stats();
+
     return 0;
 }

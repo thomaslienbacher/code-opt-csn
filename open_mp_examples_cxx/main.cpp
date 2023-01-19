@@ -6,15 +6,23 @@
 #include <sstream>
 #include "Benchmark.hpp"
 
-#define N (20'000'000)
+#define N (15'000'000)
 
 uint64_t data[N];
 
+uint64_t f(int i) {
+    double r = i * 63;
+    r *= sqrt(r / 1.4);
+    auto a = (uint64_t) r;
+    return a + 1;
+}
+
 int main() {
-    std::cout << "omp num procs: " << omp_get_num_procs() << "\n";
+    std::cout << "available threads: " << omp_get_num_procs() << "\n";
 
     int priv = 0;
     std::atomic<int> shared = 0;
+
 #pragma omp parallel default(none) private(priv) shared(stdout, shared)
     {
         int id = omp_get_thread_num();
@@ -24,30 +32,21 @@ int main() {
 
     auto b1 = Benchmark("simple-for", 500, [&]() {
         for (int i = 0; i < N; ++i) {
-            data[i] = i * 63;
-            double r = sqrt((double) i);
-            auto *ptr = (uint64_t *) (&r);
-            data[i] += *ptr;
+            data[i] = f(i);
         }
     });
 
     auto b2 = Benchmark("for-omp-parallel-all", 500, [&]() {
 #pragma omp parallel for shared(data) default(none)
         for (int i = 0; i < N; ++i) {
-            data[i] = i * 63;
-            double r = sqrt((double) i);
-            auto *ptr = (uint64_t *) (&r);
-            data[i] += *ptr;
+            data[i] = f(i);
         }
     });
 
     auto b3 = Benchmark("for-omp-parallel-3", 500, [&]() {
 #pragma omp parallel for shared(data) default(none) num_threads(3)
         for (int i = 0; i < N; ++i) {
-            data[i] = i * 63;
-            double r = sqrt((double) i);
-            auto *ptr = (uint64_t *) (&r);
-            data[i] += *ptr;
+            data[i] = f(i);
         }
     });
 

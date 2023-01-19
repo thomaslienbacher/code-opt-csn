@@ -185,7 +185,55 @@ uint32_t selected_naive_omp_sum(const uint32_t *data, const int len) {
     return sum;
 }
 
-uint32_t selected_simd_omp_sum(uint32_t *data, const int len) {
+uint32_t selected_simd_256_omp_sum(uint32_t *data, const int len) {
+    assert(len % 64 == 0);
+    assert((size_t) data % 64 == 0);
+    __m256i sum = _mm256_set1_epi32(0);
+    const __m256i ones = _mm256_set1_epi32(1);
+
+    for (int i = 0; i < len; i += 64) {
+        __m256i elem = _mm256_load_epi32(data + i);
+        __mmask8 mask = _mm256_cmp_epu32_mask(elem, ones, _MM_CMPINT_EQ);
+        sum = _mm256_mask_add_epi32(sum, mask, sum, elem);
+
+        elem = _mm256_load_epi32(data + i + 8);
+        mask = _mm256_cmp_epu32_mask(elem, ones, _MM_CMPINT_EQ);
+        sum = _mm256_mask_add_epi32(sum, mask, sum, elem);
+
+        elem = _mm256_load_epi32(data + i + 16);
+        mask = _mm256_cmp_epu32_mask(elem, ones, _MM_CMPINT_EQ);
+        sum = _mm256_mask_add_epi32(sum, mask, sum, elem);
+
+        elem = _mm256_load_epi32(data + i + 24);
+        mask = _mm256_cmp_epu32_mask(elem, ones, _MM_CMPINT_EQ);
+        sum = _mm256_mask_add_epi32(sum, mask, sum, elem);
+
+        elem = _mm256_load_epi32(data + i + 32);
+        mask = _mm256_cmp_epu32_mask(elem, ones, _MM_CMPINT_EQ);
+        sum = _mm256_mask_add_epi32(sum, mask, sum, elem);
+
+        elem = _mm256_load_epi32(data + i + 40);
+        mask = _mm256_cmp_epu32_mask(elem, ones, _MM_CMPINT_EQ);
+        sum = _mm256_mask_add_epi32(sum, mask, sum, elem);
+
+        elem = _mm256_load_epi32(data + i + 48);
+        mask = _mm256_cmp_epu32_mask(elem, ones, _MM_CMPINT_EQ);
+        sum = _mm256_mask_add_epi32(sum, mask, sum, elem);
+
+        elem = _mm256_load_epi32(data + i + 56);
+        mask = _mm256_cmp_epu32_mask(elem, ones, _MM_CMPINT_EQ);
+        sum = _mm256_mask_add_epi32(sum, mask, sum, elem);
+    }
+
+    uint32_t last_row[8];
+    _mm256_storeu_epi32(last_row, sum);
+
+    uint32_t last = last_row[0] + last_row[1] + last_row[2] + last_row[3] +
+                    last_row[4] + last_row[5] + last_row[6] + last_row[7];
+    return last;
+}
+
+uint32_t selected_simd_512_omp_sum(uint32_t *data, const int len) {
     assert(len % 64 == 0);
     assert((size_t) data % 64 == 0);
     __m512i sum = _mm512_set1_epi32(0);
