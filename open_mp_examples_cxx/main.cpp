@@ -2,22 +2,25 @@
 #include <cstdint>
 #include <cmath>
 #include <omp.h>
+#include <atomic>
 #include <sstream>
 #include "Benchmark.hpp"
 
-#define N (32'000'000)
+#define N (20'000'000)
 
 uint64_t data[N];
 
 int main() {
     std::cout << "omp num procs: " << omp_get_num_procs() << "\n";
 
-#pragma omp parallel default(none) shared(stdout)
+    int priv = 0;
+    std::atomic<int> shared = 0;
+#pragma omp parallel default(none) private(priv) shared(stdout, shared)
     {
         int id = omp_get_thread_num();
-        fprintf(stdout, "thread id: %d\n", id);
+        priv++;
+        fprintf(stdout, "thread: %d  private: %d  shared: %d\n", id, priv, shared.fetch_add(1));
     }
-
 
     auto b1 = Benchmark("simple-for", 500, [&]() {
         for (int i = 0; i < N; ++i) {
@@ -55,6 +58,5 @@ int main() {
     b2.print_stats();
     b3.print_stats();
 
-    std::cout << "last value: " << std::hex << data[N - 1] << std::endl;
     return 0;
 }

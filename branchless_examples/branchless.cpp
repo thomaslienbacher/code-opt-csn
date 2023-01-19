@@ -69,6 +69,12 @@ int main() {
         uppercase_shift(s, strlen(s));
         printf("%s\n", s);
     }
+    {
+        char s[] = "To Upper test ][().-#+123456789";
+        printf("%s => ", s);
+        uppercase_shift_sub(s, strlen(s));
+        printf("%s\n", s);
+    }
 
     // performance differs when compiling with and without vector extensions
     // benchmark different uppercase functions
