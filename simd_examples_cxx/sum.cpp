@@ -191,6 +191,11 @@ uint32_t selected_simd_256_omp_sum(uint32_t *data, const int len) {
     __m256i sum = _mm256_set1_epi32(0);
     const __m256i ones = _mm256_set1_epi32(1);
 
+#pragma omp declare reduction(_mm256_reduce: __m256i: \
+omp_out=_mm256_add_epi32(omp_out, omp_in)) initializer( \
+omp_priv=_mm256_set1_epi32(0))
+
+#pragma omp parallel for default(none) shared(len, data, ones) reduction(_mm256_reduce:sum)
     for (int i = 0; i < len; i += 64) {
         __m256i elem = _mm256_load_epi32(data + i);
         __mmask8 mask = _mm256_cmp_epu32_mask(elem, ones, _MM_CMPINT_EQ);
@@ -239,12 +244,12 @@ uint32_t selected_simd_512_omp_sum(uint32_t *data, const int len) {
     __m512i sum = _mm512_set1_epi32(0);
     const __m512i ones = _mm512_set1_epi32(1);
 
-#pragma omp declare reduction(_mm512_set1_epi32: __m512i: \
+#pragma omp declare reduction(_mm512_reduce: __m512i: \
 omp_out=_mm512_add_epi32(omp_out, omp_in)) initializer( \
 omp_priv=_mm512_set1_epi32(0))
 
     // simd might be faster because of loop unrolling
-#pragma omp parallel for default(none) shared(len, data, ones) reduction(_mm512_set1_epi32:sum)
+#pragma omp parallel for default(none) shared(len, data, ones) reduction(_mm512_reduce:sum)
     for (int i = 0; i < len; i += 64) {
         __m512i elem = _mm512_load_epi32(data + i);
         __mmask16 mask = _mm512_cmp_epu32_mask(elem, ones, _MM_CMPINT_EQ);
